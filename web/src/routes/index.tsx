@@ -117,11 +117,11 @@ function BackupLocations() {
 							</CardHeader>
 							<CardContent className="grid grid-cols-[auto_1fr] gap-2">
 								<p>Endpoint:</p>
-								<p className="font-mono font-bold">{s3Config.endpoint}</p>
+								<p className="text-ellipsis overflow-hidden font-bold">{s3Config.endpoint}</p>
 								<p>Bucket:</p>
-								<p className="font-mono font-bold">{s3Config.bucket}</p>
+								<p className="text-ellipsis overflow-hidden font-bold">{s3Config.bucket}</p>
 								<p>Prefix:</p>
-								<p className="font-mono font-bold">{s3Config.prefix}</p>
+								<p className="text-ellipsis overflow-hidden font-bold">{s3Config.prefix}</p>
 							</CardContent>
 							<CardFooter className="flex gap-2 justify-end">
 								<Button onClick={() => setEditConfig({ id: s3Id, s3Config })}>Edit</Button>
@@ -194,9 +194,9 @@ function Databases() {
 							</CardHeader>
 							<CardContent className="grid grid-cols-[auto_1fr] gap-2">
 								<p>Host:</p>
-								<p className="font-mono font-bold">{database.db?.host ?? ""}</p>
+								<p className="text-ellipsis overflow-hidden font-bold">{database.db?.host ?? ""}</p>
 								<p>Database:</p>
-								<p className="font-mono font-bold">{database.db?.database ?? ""}</p>
+								<p className="text-ellipsis overflow-hidden font-bold">{database.db?.database ?? ""}</p>
 							</CardContent>
 							<CardFooter className="flex gap-2 justify-between">
 								<Link to="/db" search={{ dbId }}>
