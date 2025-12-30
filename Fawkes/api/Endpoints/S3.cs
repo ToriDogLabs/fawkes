@@ -6,7 +6,7 @@ using Voyager;
 
 namespace Fawkes.Api.Endpoints;
 
-[VoyagerEndpoint("/s3/{id}")]
+[VoyagerEndpoint("/api/s3/{id}")]
 public class S3
 {
 	public record Request([FromRoute] string id);
@@ -64,7 +64,7 @@ public class S3
 	}
 }
 
-[VoyagerEndpoint("/s3")]
+[VoyagerEndpoint("/api/s3")]
 public class GetAllS3()
 {
 	public IResult Get(AppSettings appSettings)

@@ -175,7 +175,7 @@ if (!await scheduler.CheckExists(Constants.BarmanCronJobKey))
 }
 await ArchiveService.UpdateCleanupJob(appSettings, scheduler);
 
-app.MapGet("/db", () =>
+app.MapGet("/api/db", () =>
 {
 	return appSettings.Databases.Select(dbKvp =>
 	{
@@ -198,7 +198,7 @@ app.MapGet("/db", () =>
 var hostRegex = HostRegex();
 var pgUserRegex = PgUserRegex();
 
-app.MapPut("/db/{dbId}/backup/{backupId}/keep", async ([FromRoute] string backupId, [FromRoute] string dbId, [FromBody] MultiLocationRequest req) =>
+app.MapPut("/api/db/{dbId}/backup/{backupId}/keep", async ([FromRoute] string backupId, [FromRoute] string dbId, [FromBody] MultiLocationRequest req) =>
 {
 	Dictionary<string, KeepStatus> results = [];
 	foreach (var locationId in req.LocationIds)
@@ -225,7 +225,7 @@ app.MapPut("/db/{dbId}/backup/{backupId}/keep", async ([FromRoute] string backup
 	return results;
 });
 
-app.MapDelete("/db/{dbId}/backup/{backupId}/keep", async ([FromRoute] string backupId, [FromRoute] string dbId, [FromBody] MultiLocationRequest req) =>
+app.MapDelete("/api/db/{dbId}/backup/{backupId}/keep", async ([FromRoute] string backupId, [FromRoute] string dbId, [FromBody] MultiLocationRequest req) =>
 {
 	Dictionary<string, KeepStatus> results = [];
 	foreach (var locationId in req.LocationIds)
@@ -252,7 +252,7 @@ app.MapDelete("/db/{dbId}/backup/{backupId}/keep", async ([FromRoute] string bac
 	return results;
 });
 
-app.MapDelete("/db/{dbId}/backup/{backupId}", async ([FromRoute] string backupId, [FromRoute] string dbId,
+app.MapDelete("/api/db/{dbId}/backup/{backupId}", async ([FromRoute] string backupId, [FromRoute] string dbId,
 	[FromBody] MultiLocationRequest req) =>
 {
 	var deletedLocations = new List<string>();
@@ -278,7 +278,7 @@ app.MapDelete("/db/{dbId}/backup/{backupId}", async ([FromRoute] string backupId
 	return deletedLocations;
 });
 
-app.MapGet("/db/{dbId}/schedule", ([FromRoute] string dbId) =>
+app.MapGet("/api/db/{dbId}/schedule", ([FromRoute] string dbId) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var dbSettings))
 	{
@@ -287,7 +287,7 @@ app.MapGet("/db/{dbId}/schedule", ([FromRoute] string dbId) =>
 	return Enumerable.Empty<DbBackupSchedule>();
 });
 
-app.MapPut("/db/{dbId}/schedule", async ([FromBody] DbBackupSchedule request, [FromRoute] string dbId) =>
+app.MapPut("/api/db/{dbId}/schedule", async ([FromBody] DbBackupSchedule request, [FromRoute] string dbId) =>
 {
 	var jobKey = Constants.GetScheduleJobKey(request.Id);
 	var triggers = await scheduler.GetTriggersOfJob(jobKey);
@@ -335,7 +335,7 @@ app.MapPut("/db/{dbId}/schedule", async ([FromBody] DbBackupSchedule request, [F
 	}
 });
 
-app.MapDelete("/db/{dbId}/schedule/{id}", async ([FromRoute] string dbId, [FromRoute] string id) =>
+app.MapDelete("/api/db/{dbId}/schedule/{id}", async ([FromRoute] string dbId, [FromRoute] string id) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var dbSettings))
 	{
@@ -344,7 +344,7 @@ app.MapDelete("/db/{dbId}/schedule/{id}", async ([FromRoute] string dbId, [FromR
 	}
 });
 
-app.MapPost("/db/{dbId}/backup", async (HttpContext context, [FromRoute] string dbId, [FromQuery] string? name) =>
+app.MapPost("/api/db/{dbId}/backup", async (HttpContext context, [FromRoute] string dbId, [FromQuery] string? name) =>
 {
 	await scheduler.ScheduleJob(JobBuilder.Create<BarmanBaseBackupJob>()
 		.UsingJobData("dbId", dbId)
@@ -353,7 +353,7 @@ app.MapPost("/db/{dbId}/backup", async (HttpContext context, [FromRoute] string 
 		TriggerBuilder.Create().StartNow().Build());
 }).WithOpenApi();
 
-app.MapGet("/db/{dbId}/backup", async ([FromRoute] string dbId) =>
+app.MapGet("/api/db/{dbId}/backup", async ([FromRoute] string dbId) =>
 {
 	var backups = await dbService.GetBackups(dbId);
 	return backups.GroupBy(b => b.BackupId).Select(group =>
@@ -369,7 +369,7 @@ app.MapGet("/db/{dbId}/backup", async ([FromRoute] string dbId) =>
 	});
 }).WithOpenApi();
 
-app.MapPost("/db/{dbId}/s3", async ([FromRoute] string dbId, [FromBody] string[] s3Ids) =>
+app.MapPost("/api/db/{dbId}/s3", async ([FromRoute] string dbId, [FromBody] string[] s3Ids) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var db))
 	{
@@ -378,7 +378,7 @@ app.MapPost("/db/{dbId}/s3", async ([FromRoute] string dbId, [FromBody] string[]
 	}
 }).WithOpenApi();
 
-app.MapGet("/db/{dbId}/backup/{backupId}/recover/{s3Id}", ([FromRoute] string dbId, [FromRoute] string backupId, [FromRoute] string s3Id, [FromQuery] string? targetTime) =>
+app.MapGet("/api/db/{dbId}/backup/{backupId}/recover/{s3Id}", ([FromRoute] string dbId, [FromRoute] string backupId, [FromRoute] string s3Id, [FromQuery] string? targetTime) =>
 {
 	if (appSettings.S3Locations.TryGetValue(s3Id, out var config))
 	{
@@ -402,7 +402,7 @@ app.MapGet("/db/{dbId}/backup/{backupId}/recover/{s3Id}", ([FromRoute] string db
 	return null;
 }).WithOpenApi();
 
-app.MapGet("/retention/{dbId}", ([FromRoute] string dbId) =>
+app.MapGet("/api/retention/{dbId}", ([FromRoute] string dbId) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var db))
 	{
@@ -411,7 +411,7 @@ app.MapGet("/retention/{dbId}", ([FromRoute] string dbId) =>
 	return null;
 }).WithOpenApi();
 
-app.MapPut("/retention/{dbId}", async Task<Results<Ok, NotFound>> ([FromRoute] string dbId, [FromBody] RetentionPolicy policy) =>
+app.MapPut("/api/retention/{dbId}", async Task<Results<Ok, NotFound>> ([FromRoute] string dbId, [FromBody] RetentionPolicy policy) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var db))
 	{
@@ -422,7 +422,7 @@ app.MapPut("/retention/{dbId}", async Task<Results<Ok, NotFound>> ([FromRoute] s
 	return TypedResults.NotFound();
 }).WithOpenApi();
 
-app.MapDelete("/db/{dbId}/archive/policy/{id}", async Task<Results<Ok, ProblemHttpResult>>
+app.MapDelete("/api/db/{dbId}/archive/policy/{id}", async Task<Results<Ok, ProblemHttpResult>>
 	([FromRoute] string dbId, [FromRoute] Guid id) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var db))
@@ -434,7 +434,7 @@ app.MapDelete("/db/{dbId}/archive/policy/{id}", async Task<Results<Ok, ProblemHt
 	return TypedResults.Problem("Unable to find database.");
 }).WithOpenApi();
 
-app.MapPut("/db/{dbId}/archive/policy", async Task<Results<Ok, ProblemHttpResult>>
+app.MapPut("/api/db/{dbId}/archive/policy", async Task<Results<Ok, ProblemHttpResult>>
 	([FromRoute] string dbId, [FromBody] ArchivalPolicy policy) =>
 {
 	if (appSettings.Databases.TryGetValue(dbId, out var db))
@@ -454,7 +454,7 @@ app.MapPut("/db/{dbId}/archive/policy", async Task<Results<Ok, ProblemHttpResult
 	return TypedResults.Problem("Unable to find database.");
 }).WithOpenApi();
 
-app.MapGet("/db{dbId}/archive/policies", Ok<List<ArchivalPolicy>>
+app.MapGet("/api/db{dbId}/archive/policies", Ok<List<ArchivalPolicy>>
 	([FromRoute] string dbId) =>
 {
 	List<ArchivalPolicy> policies = [];
@@ -465,8 +465,8 @@ app.MapGet("/db{dbId}/archive/policies", Ok<List<ArchivalPolicy>>
 	return TypedResults.Ok(policies);
 }).WithOpenApi();
 
-app.MapHub<SignalrHub>("/signalr");
-app.MapHealthChecks("/health");
+app.MapHub<SignalrHub>("/api/signalr");
+app.MapHealthChecks("/api/health");
 
 app.Run();
 

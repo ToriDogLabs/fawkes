@@ -9,7 +9,7 @@ using Voyager;
 
 namespace Fawkes.Api.Endpoints;
 
-[VoyagerEndpoint("/db/{dbId}")]
+[VoyagerEndpoint("/api/db/{dbId}")]
 public partial class Db
 {
 	private static Regex pgPassRegex = PgPassRegex();

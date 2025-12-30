@@ -12,7 +12,7 @@ public enum MessageVariant
 	OnGoing
 }
 
-[VoyagerEndpoint("/notifications")]
+[VoyagerEndpoint("/api/notifications")]
 public class NotificationEndpoint(INotificationService notifications)
 {
 	public List<Notification> Get()

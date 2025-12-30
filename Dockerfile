@@ -39,9 +39,6 @@ RUN groupadd --system barman && \
     mkdir -p /etc/barman /var/lib/barman /var/log/barman /app/data /var/lib/barmanweb && \
     touch /etc/barman.conf
 
-USER barman
-RUN touch /var/lib/barman/.pgpass && chmod 0600 /var/lib/barman/.pgpass
-
 ENV AWS_CONFIG_FILE=/app/data/.aws/config
 ENV AWS_SHARED_CREDENTIALS_FILE=/app/data/.aws/credentials
 
@@ -85,7 +82,7 @@ WORKDIR /app
 # Get the executable and copy it to /healthchecks
 COPY --from=ghcr.io/alexaka1/distroless-dotnet-healthchecks:1 / /healthchecks
 # Setup the healthcheck using the EXEC array syntax
-HEALTHCHECK CMD ["/healthchecks/Distroless.HealthChecks", "--uri", "http://localhost:8080/health"]
+HEALTHCHECK CMD ["/healthchecks/Distroless.HealthChecks", "--uri", "http://localhost:8080/api/health"]
 
 COPY --link --from=publish /app/publish .
 COPY --link --from=frontend-builder /app/dist ./wwwroot
@@ -93,5 +90,6 @@ COPY --link --from=frontend-builder /app/dist ./wwwroot
 USER root
 RUN chown -R barman:barman /var/lib/barman /var/log/barman /app/data /var/lib/barmanweb /etc/barman.conf
 USER barman
+RUN touch /app/data/.pgpass && chmod 0600 /app/data/.pgpass
 
 ENTRYPOINT ["dotnet", "Fawkes.Api.dll"]

@@ -5,7 +5,7 @@ using Voyager;
 
 namespace Fawkes.Api;
 
-[VoyagerEndpoint("/timeZones")]
+[VoyagerEndpoint("/api/timeZones")]
 public class TimezonesEndpoint
 {
 	public record TimeZoneDescription(string Id, string Name);
@@ -19,7 +19,7 @@ public class TimezonesEndpoint
 	}
 }
 
-[VoyagerEndpoint("settings/timeZone")]
+[VoyagerEndpoint("/api/settings/timeZone")]
 public class TimezoneSettingsEndpoint
 {
 	public static IResult Get(AppSettings settings)

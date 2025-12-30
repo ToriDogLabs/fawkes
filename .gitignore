@@ -7,3 +7,4 @@ web/src/gen/*
 Fawkes/.localstack
 Fawkes/api/data
 Fawkes/caddyfile
+web/tsconfig.tsbuildinfo

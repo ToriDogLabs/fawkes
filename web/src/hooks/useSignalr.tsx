@@ -7,7 +7,9 @@ import { useEffect } from "react";
 import { useClientMethod } from "react-use-signalr";
 import { queries, useAddBackupGroup, useRefreshBackups, useRemoveBackup } from "./useApi";
 
-const signalrConnection = new signalR.HubConnectionBuilder().withUrl("http://localhost:62082/signalr").withAutomaticReconnect().build();
+const baseUrl = location.port === "3001" ? "http://localhost:62082" : "";
+
+const signalrConnection = new signalR.HubConnectionBuilder().withUrl(`${baseUrl}/api/signalr`).withAutomaticReconnect().build();
 signalrConnection.start();
 
 function useSignalr(methodName: string, callback: (...args: any[]) => void) {

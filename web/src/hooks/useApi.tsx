@@ -96,7 +96,7 @@ export function useKeepBackup() {
 		mutationFn: async ({ dbId: dbId, backupId, locationIds }: { dbId: string; backupId: string; locationIds: string[] }) => {
 			addPending(backupId);
 			return await handleResponse(
-				client.PUT("/db/{dbId}/backup/{backupId}/keep", { params: { path: { dbId, backupId } }, body: { locationIds } })
+				client.PUT("/api/db/{dbId}/backup/{backupId}/keep", { params: { path: { dbId, backupId } }, body: { locationIds } })
 			);
 		},
 		onSuccess(result, { dbId, backupId }) {
@@ -111,7 +111,7 @@ export function useKeepBackup() {
 		mutationFn: async ({ dbId: dbId, backupId, locationIds }: { dbId: string; backupId: string; locationIds: string[] }) => {
 			addPending(backupId);
 			return await handleResponse(
-				client.DELETE("/db/{dbId}/backup/{backupId}/keep", { params: { path: { dbId, backupId } }, body: { locationIds } })
+				client.DELETE("/api/db/{dbId}/backup/{backupId}/keep", { params: { path: { dbId, backupId } }, body: { locationIds } })
 			);
 		},
 		onSuccess(result, { dbId, backupId }) {
@@ -132,7 +132,7 @@ export function usePutArchivePolicy() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: ({ dbId, policy }: { dbId: string; policy: ApiTypes["ArchivalPolicy"] }) =>
-			handleResponse(client.PUT("/db/{dbId}/archive/policy", { params: { path: { dbId } }, body: policy })),
+			handleResponse(client.PUT("/api/db/{dbId}/archive/policy", { params: { path: { dbId } }, body: policy })),
 		onSuccess(_result, { dbId, policy }) {
 			queryClient.setQueryOptionsData(queries.getArchivePolicies(dbId), (oldPolicies) => {
 				if (!oldPolicies) return [policy];
@@ -146,7 +146,7 @@ export function usePutArchivePolicy() {
 export function usePutSettingsTimezone() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (data: ApiTypes["PutTimezoneRequest"]) => handleResponse(client.PUT("/settings/timeZone", { body: data })),
+		mutationFn: (data: ApiTypes["PutTimezoneRequest"]) => handleResponse(client.PUT("/api/settings/timeZone", { body: data })),
 		onSuccess(_data, timeZone) {
 			queryClient.setQueryData(queryKeys.savedTimezone, timeZone);
 		},
@@ -157,7 +157,7 @@ export function useDeleteArchivePolicy() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: ({ dbId, policyId }: { dbId: string; policyId: string }) =>
-			handleResponse(client.DELETE("/db/{dbId}/archive/policy/{id}", { params: { path: { dbId, id: policyId } } })),
+			handleResponse(client.DELETE("/api/db/{dbId}/archive/policy/{id}", { params: { path: { dbId, id: policyId } } })),
 		onSuccess(_result, { dbId, policyId }) {
 			queryClient.setQueryOptionsData(queries.getArchivePolicies(dbId), (oldPolicies) => {
 				if (!oldPolicies) return oldPolicies;
@@ -171,7 +171,7 @@ export function useDeleteArchivePolicy() {
 export function useDeleteBackupLocation() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
-		mutationFn: ({ id }: { id: string }) => handleResponse(client.DELETE("/s3/{id}", { params: { path: { id } }, body: {} })),
+		mutationFn: ({ id }: { id: string }) => handleResponse(client.DELETE("/api/s3/{id}", { params: { path: { id } }, body: {} })),
 		onSuccess(_, { id }) {
 			queryClient.setQueryOptionsData(queries.getBackupLocations(), (o) => {
 				if (o) {
@@ -191,7 +191,7 @@ export function useDeleteDatabase() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: async ({ dbId }: { dbId: string }) => {
-			return await handleResponse(client.DELETE("/db/{dbId}", { params: { path: { dbId } }, body: {} }));
+			return await handleResponse(client.DELETE("/api/db/{dbId}", { params: { path: { dbId } }, body: {} }));
 		},
 		onError(error) {
 			toast({
@@ -214,7 +214,7 @@ export function usePostBackup() {
 	return useMutation({
 		mutationFn: async ({ dbId, name }: { dbId: string; name?: string | null }) => {
 			return await handleResponse(
-				client.POST("/db/{dbId}/backup", { params: { path: { dbId }, query: { name: name ?? undefined } } })
+				client.POST("/api/db/{dbId}/backup", { params: { path: { dbId }, query: { name: name ?? undefined } } })
 			);
 		},
 	});
@@ -224,7 +224,7 @@ export function usePutRetention() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: async ({ dbId, policy }: { dbId: string; policy: ApiTypes["RetentionPolicy"] }) => {
-			return await handleResponse(client.PUT("/retention/{dbId}", { params: { path: { dbId } }, body: policy }));
+			return await handleResponse(client.PUT("/api/retention/{dbId}", { params: { path: { dbId } }, body: policy }));
 		},
 		onSuccess(_data, { dbId, policy }) {
 			queryClient.setQueryOptionsData(queries.getRetention(dbId), policy);
@@ -243,7 +243,7 @@ export function usePutSchedule() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: async ({ dbId, schedule }: { dbId: string; schedule: ApiTypes["DbBackupSchedule"] }) =>
-			await handleResponse(client.PUT("/db/{dbId}/schedule", { params: { path: { dbId } }, body: schedule })),
+			await handleResponse(client.PUT("/api/db/{dbId}/schedule", { params: { path: { dbId } }, body: schedule })),
 		onSuccess(_, { dbId, schedule }) {
 			queryClient.setQueryOptionsData(queries.getSchedule(dbId), (old) => {
 				if (!old) return old;
@@ -269,7 +269,7 @@ export function useDeleteSchedule() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: async ({ dbId, id }: { dbId: string; id: string }) =>
-			await handleResponse(client.DELETE("/db/{dbId}/schedule/{id}", { params: { path: { dbId, id } } })),
+			await handleResponse(client.DELETE("/api/db/{dbId}/schedule/{id}", { params: { path: { dbId, id } } })),
 		onSuccess(_, { dbId, id }) {
 			queryClient.setQueryOptionsData(queries.getSchedule(dbId), (old) => {
 				if (!old) return old;
@@ -284,7 +284,7 @@ export function useDeleteServerBackupid() {
 	return useMutation({
 		mutationFn: async ({ dbId, backupId, locationIds }: { dbId: string; backupId: string; locationIds: string[] }) =>
 			await handleResponse(
-				client.DELETE("/db/{dbId}/backup/{backupId}", { params: { path: { dbId, backupId } }, body: { locationIds } })
+				client.DELETE("/api/db/{dbId}/backup/{backupId}", { params: { path: { dbId, backupId } }, body: { locationIds } })
 			),
 		onSuccess(deletedLocations, { dbId, backupId }) {
 			if (!deletedLocations) return;
@@ -309,7 +309,7 @@ export function useDeleteServerBackupid() {
 export function useSaveDbBackupLocations() {
 	return useMutation({
 		mutationFn: async ({ dbId, s3Ids }: { dbId: string; s3Ids: string[] }) =>
-			await handleResponse(client.POST("/db/{dbId}/s3", { params: { path: { dbId } }, body: s3Ids })),
+			await handleResponse(client.POST("/api/db/{dbId}/s3", { params: { path: { dbId } }, body: s3Ids })),
 	});
 }
 
@@ -317,7 +317,7 @@ export function useSaveS3() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: async ({ id, data }: { id: string; data: ApiTypes["S3BackupLocation"] }) =>
-			await handleResponse(client.POST("/s3/{id}", { params: { path: { id } }, body: { config: data } })),
+			await handleResponse(client.POST("/api/s3/{id}", { params: { path: { id } }, body: { config: data } })),
 		onSuccess(_, { id, data }) {
 			queryClient.setQueryOptionsData(queries.getBackupLocations(), (o) => {
 				if (o) {
@@ -338,7 +338,7 @@ export function useSaveDb() {
 	const queryClient = useQueryClientExt();
 	return useMutation({
 		mutationFn: async ({ dbId, data }: { dbId: string; data: ApiTypes["DbConfig"] }) => {
-			return await handleResponse(client.POST("/db/{dbId}", { params: { path: { dbId } }, body: { config: data } }));
+			return await handleResponse(client.POST("/api/db/{dbId}", { params: { path: { dbId } }, body: { config: data } }));
 		},
 		onError(error: ApiTypes["HttpValidationProblemDetails"]) {
 			toast({
@@ -378,7 +378,7 @@ export function getServerBackupidRecoverCmd({
 		queryKey: queryKeys.recoverCmd(dbId, backupId, targetTime),
 		queryFn: async () =>
 			await handleResponse(
-				client.GET("/db/{dbId}/backup/{backupId}/recover/{s3Id}", {
+				client.GET("/api/db/{dbId}/backup/{backupId}/recover/{s3Id}", {
 					params: { path: { dbId, backupId, s3Id } },
 					query: { targetTime },
 				})
@@ -390,55 +390,55 @@ export const queries = {
 	getBackupLocations() {
 		return queryOptions({
 			queryKey: queryKeys.backupLocations,
-			queryFn: async () => await handleResponse(client.GET("/s3")),
+			queryFn: async () => await handleResponse(client.GET("/api/s3")),
 		});
 	},
 	getDatabases() {
 		return queryOptions({
 			queryKey: ["databases"],
-			queryFn: async () => await handleResponse(client.GET("/db")),
+			queryFn: async () => await handleResponse(client.GET("/api/db")),
 		});
 	},
 	getServerBackups(dbId: string) {
 		return queryOptions({
 			queryKey: queryKeys.serverBackup(dbId),
-			queryFn: async () => await handleResponse(client.GET("/db/{dbId}/backup", { params: { path: { dbId } } })),
+			queryFn: async () => await handleResponse(client.GET("/api/db/{dbId}/backup", { params: { path: { dbId } } })),
 		});
 	},
 	getSchedule(dbId: string) {
 		return queryOptions({
 			queryKey: queryKeys.schedule(dbId),
-			queryFn: async () => await handleResponse(client.GET("/db/{dbId}/schedule", { params: { path: { dbId } } })),
+			queryFn: async () => await handleResponse(client.GET("/api/db/{dbId}/schedule", { params: { path: { dbId } } })),
 		});
 	},
 	getRetention(dbId: string) {
 		return queryOptions({
 			queryKey: queryKeys.retention,
-			queryFn: async () => await handleResponse(client.GET("/retention/{dbId}", { params: { path: { dbId } } })),
+			queryFn: async () => await handleResponse(client.GET("/api/retention/{dbId}", { params: { path: { dbId } } })),
 		});
 	},
 	getArchivePolicies(dbId: string) {
 		return queryOptions({
 			queryKey: queryKeys.archivePolicy,
-			queryFn: async () => await handleResponse(client.GET("/db{dbId}/archive/policies", { params: { path: { dbId } } })),
+			queryFn: async () => await handleResponse(client.GET("/api/db{dbId}/archive/policies", { params: { path: { dbId } } })),
 		});
 	},
 	getTimezones() {
 		return queryOptions({
 			queryKey: queryKeys.timezones,
-			queryFn: async () => await handleResponse(client.GET("/timeZones")),
+			queryFn: async () => await handleResponse(client.GET("/api/timeZones")),
 		});
 	},
 	getSavedTimezone() {
 		return queryOptions({
 			queryKey: queryKeys.savedTimezone,
-			queryFn: async () => await handleResponse(client.GET("/settings/timeZone")),
+			queryFn: async () => await handleResponse(client.GET("/api/settings/timeZone")),
 		});
 	},
 	getNotifications() {
 		return queryOptions({
 			queryKey: queryKeys.notifications,
-			queryFn: async () => await handleResponse(client.GET("/notifications")),
+			queryFn: async () => await handleResponse(client.GET("/api/notifications")),
 			refetchInterval: false,
 			refetchIntervalInBackground: false,
 			refetchOnMount: false,
