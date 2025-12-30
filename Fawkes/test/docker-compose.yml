@@ -1,0 +1,18 @@
+version: "3.4"
+
+services:
+  test-restore:
+    build:
+        dockerfile: "https://barman.brent-desktop.smithgeek.dev/api/dockerfile?baseImage%3Dpostgres%3A15&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjljYWQyNzcxLTIyNjItNGVkYy1hNjU1LTBiOGJlZTg4NzMzNCIsIm5hbWUiOiJ0ZXN0ZG9ja2VyZmlsZSIsImV4cCI6MTcyODQyNDk0NX0.aWuAJvX1h6u-gL0kDqFWDL4jZxocwGATT5-DJdMH7Qg"
+
+    #image: postgres:15
+    environment:
+        PGUSER: postgres
+        PGPASSWORD: password
+        POSTGRES_USER: postgres
+        POSTGRES_DB: postgres
+        POSTGRES_PASSWORD: password
+    ports:
+        - "5437:5432"
+    volumes:
+        - ./postgresql/data:/var/lib/postgresql/data:rw

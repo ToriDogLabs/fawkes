@@ -1,0 +1,9 @@
+volumes/*
+BarmanUi/.localstack/*
+BarmanUi/BarmanUi/data/*
+pg_restore/bin/*
+pg_restore/obj/*
+web/src/gen/*
+Fawkes/.localstack
+Fawkes/api/data
+Fawkes/caddyfile

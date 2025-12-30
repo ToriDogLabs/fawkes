@@ -1,0 +1,122 @@
+version: "3.4"
+
+services:
+    Fawkes:
+        image: ${DOCKER_REGISTRY-}fawkes
+        build:
+            context: .
+            dockerfile: api/Dockerfile
+        volumes:
+            - ./${VOLUME_DIR}/barman/:/var/lib/barman/
+        networks:
+            - db
+        environment:
+            - SECRET_KEY=1234
+        ports: 
+            - 62082:8080
+        # healthcheck:
+        #     test: "curl --fail http://localhost:8080/health"
+        #     interval: 30s
+        #     start_interval: 2s
+        #     start_period: 30s
+        #     retries: 10
+        #     timeout: 10s
+
+    postgres:
+        image: postgres:15-bullseye
+        environment:
+            PGUSER: postgres
+            PGPASSWORD: password
+            POSTGRES_USER: postgres
+            POSTGRES_DB: postgres
+            POSTGRES_PASSWORD: password
+            # WAL_LEVEL: "logical"
+            # MAX_WAL_SENDERS: 10
+            # MAX_REPLICATION_SLOTS: 10
+        ports:
+            - "5435:5432"
+        volumes:
+            - ./${VOLUME_DIR}/postgres/data:/var/lib/postgresql/data/
+        networks:
+            - db
+
+    # postgis:
+    #     image: postgis/postgis:15-3.4
+    #     environment:
+    #         PGUSER: postgres
+    #         PGPASSWORD: password
+    #         POSTGRES_USER: postgres
+    #         POSTGRES_DB: postgres
+    #         POSTGRES_PASSWORD: password
+    #     ports:
+    #         - "5438:5432"
+    #     volumes:
+    #         - ./${VOLUME_DIR}/postgis/data:/var/lib/postgresql/data/
+    #     networks:
+    #         - db
+
+    # postgres-restore2:
+    #     # build:
+    #     #     context: .
+    #     #     args: 
+    #     #         ARGS: "--access_key xfulNkJqCZJd1bDa --secret_key rSyPqTmWfhjGZr7zl2wqo7bNORGr8oGC --endpoint https://s3.brent-desktop.smithgeek.dev --path s3://postgres/barman --server sixth --id 20241013T143338"
+    #     #         BASE_IMAGE: postgres:15
+    #     #     dockerfile: Dockerfile
+    #     image: postgres:15-bullseye
+    #     environment:
+    #         PGUSER: postgres
+    #         PGPASSWORD: password
+    #         POSTGRES_USER: postgres
+    #         POSTGRES_DB: postgres
+    #         POSTGRES_PASSWORD: password
+    #     ports:
+    #         - "5440:5432"
+    #     networks:
+    #         - db
+    #     volumes:
+    #         - ./${VOLUME_DIR}/recover/postgresql/data:/var/lib/postgresql/data:rw
+    #         - ./${VOLUME_DIR}/recover/pg_restore:/usr/local/bin/pg_restore
+
+    # postgis-restore:
+    #     build:
+    #         context: .
+    #         args: 
+    #             ARGS: "--access_key xfulNkJqCZJd1bDa --secret_key rSyPqTmWfhjGZr7zl2wqo7bNORGr8oGC --endpoint https://s3.brent-desktop.smithgeek.dev --path s3://postgres/barman --server gis --id 20241013T152413"
+    #             BASE_IMAGE: postgres:15
+    #         dockerfile: Dockerfile
+
+    #     #image: postgis/postgis:15-3.4
+    #     environment:
+    #         PGUSER: postgres
+    #         PGPASSWORD: password
+    #         POSTGRES_USER: postgres
+    #         POSTGRES_DB: postgres
+    #         POSTGRES_PASSWORD: password
+    #     ports:
+    #         - "5439:5432"
+    #     networks:
+    #         - db
+    #     volumes:
+    #         - ./${VOLUME_DIR}/recover-gis/postgresql/data:/var/lib/postgresql/data:rw
+        
+
+    s3:
+        container_name: localstack
+        image: localstack/localstack
+        ports:
+          - "4566:4566"
+        environment:
+          - SERVICES=s3
+          - DEBUG=1
+          - USE_LIGHT_IMAGE=1
+          - PERSISTENCE=1
+          - LOCALSTACK_VOLUME_DIR=/var/lib/localstack
+          - LS_API_REQUEST_LOG=1
+        volumes:
+          - "./.localstack:/var/lib/localstack"
+          - "/var/run/docker.sock:/var/run/docker.sock"
+        networks:
+            - db
+
+networks:
+    db:

@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	/* :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 47.9 95.8% 53.1%;
+    --primary-foreground: 26 83.3% 14.1%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 20 14.3% 4.1%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 47.9 95.8% 53.1%;
+    --primary-foreground: 26 83.3% 14.1%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 35.5 91.7% 32.9%;
+  } */
+
+	:root {
+		--background: 235 100% 95%;
+		--foreground: 235 5% 0%;
+		--card: 235 50% 90%;
+		--card-foreground: 235 5% 10%;
+		--popover: 235 100% 95%;
+		--popover-foreground: 235 100% 0%;
+		--primary-h: 235;
+		--primary-s: 73%;
+		--primary-l: 53%;
+		--primary-foreground: 0 0% 100%;
+		--secondary: 235 30% 70%;
+		--secondary-foreground: 0 0% 0%;
+		--muted: 197 30% 85%;
+		--muted-foreground: 235 5% 35%;
+		--accent: 197 30% 80%;
+		--accent-foreground: 235 5% 10%;
+		--destructive: 0 100% 30%;
+		--destructive-foreground: 235 5% 90%;
+		--border: 235 30% 50%;
+		--input: 235 30% 18%;
+		--ring: 235 73% 53%;
+		--radius: 0.5rem;
+
+		--primary: var(--primary-h) var(--primary-s) var(--primary-l);
+
+		--sidebar-background: 0 0% 98%;
+
+		--sidebar-foreground: 240 5.3% 26.1%;
+
+		--sidebar-primary: 240 5.9% 10%;
+
+		--sidebar-primary-foreground: 0 0% 98%;
+
+		--sidebar-accent: 240 4.8% 95.9%;
+
+		--sidebar-accent-foreground: 240 5.9% 10%;
+
+		--sidebar-border: 220 13% 91%;
+
+		--sidebar-ring: 217.2 91.2% 59.8%;
+	}
+
+	.dark {
+		/* CSS: .bg-gradient { background: var(--gradient) } */
+		--gradient: #283c86;
+
+		--background: 235 50% 5%;
+		--foreground: 235 5% 90%;
+		--card: 235 50% 0%;
+		--card-foreground: 235 5% 90%;
+		--popover: 235 50% 5%;
+		--popover-foreground: 235 5% 90%;
+		--primary-h: 235;
+		--primary-s: 73%;
+		--primary-l: 53%;
+
+		--primary-foreground: 0 0% 100%;
+		--secondary: 235 30% 10%;
+		--secondary-foreground: 0 0% 100%;
+		--muted: 197 30% 15%;
+		--muted-foreground: 235 5% 60%;
+		--accent: 197 30% 15%;
+		--accent-foreground: 235 5% 90%;
+		--destructive: 0 100% 30%;
+		--destructive-foreground: 235 5% 90%;
+		--border: 235 30% 18%;
+		--input: 235 30% 18%;
+		--ring: 235 73% 53%;
+		--radius: 0.5rem;
+		--sidebar-background: 240 5.9% 10%;
+		--sidebar-foreground: 240 4.8% 95.9%;
+		--sidebar-primary: 224.3 76.3% 48%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 240 3.7% 15.9%;
+		--sidebar-accent-foreground: 240 4.8% 95.9%;
+		--sidebar-border: 240 3.7% 15.9%;
+		--sidebar-ring: 217.2 91.2% 59.8%;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+	}
+	input, select {
+		@apply dark:[color-scheme:dark];
+	}
+}
+
+.my-cron .c-host {
+	display: flex;
+	flex-direction: column;
+	@apply mt-2;
+
+	.c-tabs {
+		@apply flex gap-1 border-b border-zinc-700;
+
+		.c-tab {
+			text-align: left;
+			@apply p-2 mr-2 border border-zinc-800 rounded-t-md;
+		}
+	}
+
+	.c-tab-content {
+		padding-top: 0.5rem;
+		padding-left: 1rem;
+	}
+
+	.c-segment{
+		@apply my-2;
+	}
+}
+
+.cron-row {
+	@apply grid xl:grid-cols-7 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5;
+}
+
+.cron-form-inline {
+	display: flex;
+	flex-direction: row;
+}
+
+.cron-form-control {
+	margin: 0 0.2rem;
+}
+
+.cron-form-check-label {
+	padding-left: 0.4rem;
+}
+
+.cron-active {
+	@apply bg-zinc-700;
+}
