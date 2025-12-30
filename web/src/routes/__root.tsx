@@ -47,7 +47,7 @@ function PageStructure() {
 			<div className="flex-1 flex flex-col">
 				<PageContent />
 			</div>
-			<TanStackRouterDevtools />
+			{false && <TanStackRouterDevtools />}
 		</div>
 	);
 }
