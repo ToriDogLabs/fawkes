@@ -12,8 +12,6 @@ on:
 
 env:
     REGISTRY: ghcr.io
-    # Replace 'your-username' with your GitHub username or org name
-    IMAGE_NAME_PREFIX: ghcr.io/${{ github.repository_owner }}/fawkes
 jobs:
     # 1. PARALLEL BUILD JOB
     build:
@@ -25,6 +23,12 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+
+            - name: set lower case owner name
+              run: |
+                  echo "IMAGE_NAME_PREFIX=ghcr.io/${OWNER,,}/fawkes" >> ${GITHUB_ENV}
+              env:
+                  OWNER: "${{ github.repository_owner }}"
 
             - name: Normalize tag
               run: |
